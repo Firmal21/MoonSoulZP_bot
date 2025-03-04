@@ -63,14 +63,27 @@ class Program
             string[] words = str.Split(' ');
             int lastElement = words.Length - 1;
             int secondLastElement = words.Length - 2;
-            int mnojitel = 1;
+            //int mnojitel = 1;
             
             var index = words[secondLastElement].Substring(1);
 
-            mnojitel = Int32.Parse(index);
-            summ += Int32.Parse(words[lastElement]) * mnojitel;
+            bool result = int.TryParse(index, out var correctIndex);
+
+            //mnojitel = correctIndex;
+            if(result == true)
+            summ += Int32.Parse(words[lastElement]) * correctIndex;
+
+            else
+                summ += Int32.Parse(words[lastElement]) * 1;
         }
+
+
+        if(summ != 0)
         await botClient.SendTextMessageAsync(message.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+
+        else
+        await botClient.SendTextMessageAsync(message.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+
         return;
     }
 
