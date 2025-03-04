@@ -1,99 +1,98 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text.RegularExpressions;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using Telegram.Bot;
+//using Telegram.Bot.Polling;
+//using Telegram.Bot.Types;
+//using Telegram.Bot.Types.Enums;
 
-class Program
-{
+//class Program
+//{
+//    static async Task Main()
+//    {
+//        var botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww");
 
-    static async Task Main()
-    {
-        var botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww");
+//        var cancellationTokenSource = new CancellationTokenSource();
 
-        var cancellationTokenSource = new CancellationTokenSource();
+//        // Настройка приема обновлений
+//        var receiverOptions = new ReceiverOptions
+//        {
+//            AllowedUpdates = Array.Empty<UpdateType>() // Получать все типы обновлений
+//        };
 
-        // Настройка приема обновлений
-        var receiverOptions = new ReceiverOptions
-        {
-            AllowedUpdates = Array.Empty<UpdateType>() // Получать все типы обновлений
-        };
+//        botClient.StartReceiving(
+//            HandleUpdateAsync,
+//            HandleErrorAsync,
+//            receiverOptions,
+//            cancellationToken: cancellationTokenSource.Token);
 
-        botClient.StartReceiving(
-            HandleUpdateAsync,
-            HandleErrorAsync,
-            receiverOptions,
-            cancellationToken: cancellationTokenSource.Token);
+//        Console.WriteLine("Бот запущен. Нажмите Enter, чтобы выйти.");
+//        Console.ReadLine();
 
-        Console.WriteLine("Бот запущен. Нажмите Enter, чтобы выйти.");
-        Console.ReadLine();
+//        // Остановка приема обновлений
+//        cancellationTokenSource.Cancel();
+//    }
 
-        // Остановка приема обновлений
-        cancellationTokenSource.Cancel();
-    }
+//    static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+//    {
+//        if (update.Type != UpdateType.Message || update.Message.Type != MessageType.Text)
+//            return;
 
-    static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-    {
-        if (update.Type != UpdateType.Message || update.Message.Type != MessageType.Text)
-            return;
-
-        double summ = 0;
-        //var messageexit = update.message;
-        //var message = (regex.replace(update.message.text, @"\s+", " ").trim()).split(new char[] { '\n' }, stringsplitoptions.removeemptyentries);  
+//        double summ = 0;
+//        //var messageexit = update.message;
+//        //var message = (regex.replace(update.message.text, @"\s+", " ").trim()).split(new char[] { '\n' }, stringsplitoptions.removeemptyentries);  
 
 
-        var message = update.Message;
-        var secMessage =  message.Text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-        List<string> messageList = new List<string>();
+//        var message = update.Message;
+//        var secMessage =  message.Text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+//        List<string> messageList = new List<string>();
 
-        foreach( string str in secMessage)
-        {
+//        foreach( string str in secMessage)
+//        {
             
-            messageList.Add(Regex.Replace(str, @"\s+", " ").Trim());
-        }
+//            messageList.Add(Regex.Replace(str, @"\s+", " ").Trim());
+//        }
 
 
-        foreach (string str in messageList)
-        {
-            string[] words = str.Split(' ');
-            int lastElement = words.Length - 1;
-            int secondLastElement = words.Length - 2;
-            //int mnojitel = 1;
+//        foreach (string str in messageList)
+//        {
+//            string[] words = str.Split(' ');
+//            int lastElement = words.Length - 1;
+//            int secondLastElement = words.Length - 2;
+//            //int mnojitel = 1;
             
-            var index = words[secondLastElement].Substring(1);
+//            var index = words[secondLastElement].Substring(1);
 
-            bool result = int.TryParse(index, out var correctIndex);
+//            bool result = int.TryParse(index, out var correctIndex);
 
-            //mnojitel = correctIndex;
-            if(result == true)
-            summ += Int32.Parse(words[lastElement]) * correctIndex;
+//            //mnojitel = correctIndex;
+//            if(result == true)
+//            summ += Int32.Parse(words[lastElement]) * correctIndex;
 
-            else
-                summ += Int32.Parse(words[lastElement]) * 1;
-        }
-
-
-        if(summ != 0)
-        await botClient.SendTextMessageAsync(message.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
-
-        else
-        await botClient.SendTextMessageAsync(message.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
-
-        return;
-    }
+//            else
+//                summ += Int32.Parse(words[lastElement]) * 1;
+//        }
 
 
-    static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-    {
-        Console.WriteLine($"Ошибка: {exception.Message}");
-        return Task.CompletedTask;
-    }
-}
+//        if(summ != 0)
+//        await botClient.SendTextMessageAsync(message.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+
+//        else
+//        await botClient.SendTextMessageAsync(message.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+
+//        return;
+//    }
+
+
+//    static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+//    {
+//        Console.WriteLine($"Ошибка: {exception.Message}");
+//        return Task.CompletedTask;
+//    }
+//}
 
 
 
@@ -101,133 +100,223 @@ class Program
 
 
 //тут будет пункт 5.4
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading;
-//using System.Threading.Tasks;
-//using Telegram.Bot;
-//using Telegram.Bot.Polling;
-//using Telegram.Bot.Types;
-//using Telegram.Bot.Types.Enums;
-//using Telegram.Bot.Types.ReplyMarkups;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
-//namespace MoonSoulZPBot
-//{
-//    public class TestBot
-//    {
-//        static int count_true = 0;
-//        private static ITelegramBotClient _botClient;
-//        private static ReceiverOptions _receiverOptions;
+namespace MoonSoulZPBot
+{
+    public class TestBot
+    {
 
-//        static async Task Main()
-//        {
-//            _botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww"); // Укажите свой токен
-//            _receiverOptions = new ReceiverOptions
-//            {
-//                AllowedUpdates = new[] { UpdateType.Message }
-//            };
+        private static ITelegramBotClient _botClient;
+        private static ReceiverOptions _receiverOptions;
+        private static string _typeOfCount;
 
-//            var cts = new CancellationTokenSource();
-//            _botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
+        static async Task Main()
+        {
+            _botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww"); // Укажите свой токен
+            _receiverOptions = new ReceiverOptions
+            {
+                AllowedUpdates = new[] { UpdateType.Message }
+            };
 
-//            var me = await _botClient.GetMeAsync();
-//            Console.WriteLine($"Бот запущен: {me.Username}");
-//            await Task.Delay(-1); // Бесконечная задержка
-//        }
+            var cts = new CancellationTokenSource();
+            _botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
-//        private static Task ErrorHandler(ITelegramBotClient client, Exception exception, CancellationToken token)
-//        {
-//            Console.WriteLine($"Ошибка: {exception.Message}");
-//            return Task.CompletedTask;
-//        }
+            var me = await _botClient.GetMeAsync();
+            Console.WriteLine($"Бот запущен: {me.Username}");
+            await Task.Delay(-1); // Бесконечная задержка
+        }
 
-//        [Obsolete]
-//        private static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-//        {
-//            try
-//            {
-//                if (update.Type == UpdateType.Message)
-//                {
-//                    var message = update.Message;
-//                    var chat = message.Chat;
+        private static Task ErrorHandler(ITelegramBotClient client, Exception exception, CancellationToken token)
+        {
+            Console.WriteLine($"Ошибка: {exception.Message}");
+            return Task.CompletedTask;
+        }
 
-//                    if (message.Type == MessageType.Text)
-//                    {
-//                        if (message.Text == "/start")
-//                        {
-//                            count_true = 0;
+        [Obsolete]
+        private static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (update.Type == UpdateType.Message)
+                {
+                    var message = update.Message;
+                    var chat = message.Chat;
 
-//                            var startButton = new ReplyKeyboardMarkup(
-//                                new List<KeyboardButton[]>
-//                                {
-//                                    new KeyboardButton[] { new KeyboardButton("Пройти тест на IQ") },
-//                                    new KeyboardButton[] {new KeyboardButton("Пойти в жопку") }
-//                                })
-//                            {
-//                                ResizeKeyboard = true
-//                            };
-
-//                            await botClient.SendTextMessageAsync(
-//                                chat.Id,
-//                                "Приветствую тебя. Данный бот поможет тебе узнать твой IQ.",
-//                                replyMarkup: startButton);
+                    if (message.Type == MessageType.Text)
+                    {
+                        if (message.Text == "/start")
+                        {
 
 
-//                            //await botClient.SendTextMessageAsync(
-//                            //    chat.Id,
-//                            //    "Начнем!",
-//                            //    replyMarkup: startButton);
-//                            return;
-//                        }
+                            var startButton = new ReplyKeyboardMarkup(
+                                new List<KeyboardButton[]>
+                                {
+                                    new KeyboardButton[] { new KeyboardButton("Цена указана за одно украшение") },
+                                    new KeyboardButton[] {new KeyboardButton("Цена уже умножена") }
+                                })
+                            {
+                                ResizeKeyboard = true
+                            };
 
-//                        //Первое действие
+                            await botClient.SendTextMessageAsync(
+                                chat.Id,
+                                "Привет Мариночка-Вонючечка, сейчас посчитаем сколько миллионов ты вынесла за сегодня\n ",
+                                replyMarkup: startButton);
 
-//                        else if (message.Text == "Пройти тест на IQ")
-//                        {
-//                            await botClient.SendTextMessageAsync(
-//                                chat.Id,
-//                                "Начнем!\nОтвечайте на вопросы, выбирая ответы с помощью кнопок");
-//                            var question_1 = new ReplyKeyboardMarkup(
-//                                new List<KeyboardButton[]>()
-//                                {
-//            new KeyboardButton[]
-//            {
-//                 new KeyboardButton("15"),
-//                 new KeyboardButton("14"),
-//                 new KeyboardButton("22"),
-//                 new KeyboardButton("17"),
-//            },
-//                                })
-//                            {
-//                                ResizeKeyboard = true,
-//                            };
-//                            await botClient.SendTextMessageAsync(
-//                                chat.Id,
-//                                "Вставьте пропущенную цифру. \r\n2  5  8  11  _",
-//                                replyMarkup: question_1);
-//                            return;
-//                        }
-//                    }
-//                }
-//            }
 
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine($"Ошибка: {ex}");
-//            }
-//        }
+                            await botClient.SendTextMessageAsync(
+                                chat.Id,
+                                "Выбери в меню каким способом ты записывала цену!",
+                                replyMarkup: startButton);
+                            return;
+                        }
 
-//        // Вынесенная функция для удаления дубликатов
-//        private static List<T> RemoveDuplicates<T>(List<T> list)
-//        {
-//            return new HashSet<T>(list).ToList();
-//        }
-//    }
-//}
+                        //Первое действие
+
+                        else if (message.Text == "Цена указана за одно украшение")
+                        {
+                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена указана за одно украшение\n Кидай мне свой список.", cancellationToken: cancellationToken);
+                            _typeOfCount = "price for one";
+                            return;
+
+                        }
+
+                        else if (message.Text == "Цена уже умножена")
+                        {
+                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена уже умножена\n Кидай мне свой список.", cancellationToken: cancellationToken);
+                            _typeOfCount = "price for all";
+                            return;
+                        }
+
+                        if (_typeOfCount == "price for one")
+                        {
+                            PriceForOne(botClient, update, cancellationToken);
+                            _typeOfCount = null;
+                            return;
+                        }
+
+                        if (_typeOfCount == "price for all")
+                        {
+                            PriceForAll(botClient, update, cancellationToken);
+                            _typeOfCount = null;
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex}");
+            }
+        }
+
+
+        private static async Task PriceForOne(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        {
+            double summ = 0;
+            var messageList1 = update.Message;
+            var secMessage = messageList1.Text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> messageList = new List<string>();
+
+
+            foreach (string str in secMessage)
+            {
+
+                messageList.Add(Regex.Replace(str, @"\s+", " ").Trim());
+            }
+
+
+            foreach (string str in messageList)
+            {
+                string[] words = str.Split(' ');
+                int lastElement = words.Length - 1;
+                int secondLastElement = words.Length - 2;
+                //int mnojitel = 1;
+
+                var index = words[secondLastElement].Substring(1);
+
+                bool result = int.TryParse(index, out var correctIndex);
+
+                //mnojitel = correctIndex;
+                if (result == true)
+                    summ += Int32.Parse(words[lastElement]) * correctIndex;
+
+                else
+                    summ += Int32.Parse(words[lastElement]) * 1;
+            }
+
+
+            if (summ != 0)
+                await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+
+            else
+                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+
+            
+
+            return;
+        }
+
+        private static async Task PriceForAll(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        {
+            double summ = 0;
+            var messageList1 = update.Message;
+            var secMessage = messageList1.Text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> messageList = new List<string>();
+
+            foreach (string str in secMessage)
+            {
+                messageList.Add(Regex.Replace(str, @"\s+", " ").Trim());
+            }
+
+
+            foreach (string str in messageList)
+            {
+                string[] words = str.Split(' ');
+                int lastElement = words.Length - 1;
+                int secondLastElement = words.Length - 2;
+                
+                var index = words[secondLastElement].Substring(1);
+
+                bool result = int.TryParse(words[lastElement], out var correctPrice);
+                if (result == true)
+                    summ += correctPrice;
+            }
+            if (summ != 0)
+                await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+            else
+                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+            return;
+        }
+
+
+
+
+
+
+        // Вынесенная функция для удаления дубликатов
+        private static List<T> RemoveDuplicates<T>(List<T> list)
+        {
+            return new HashSet<T>(list).ToList();
+        }
+    }
+}
+
 
 /*
-
 private static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
 {
     // Обязательно ставим блок try-catch, чтобы наш бот не "падал" в случае каких-либо ошибок
