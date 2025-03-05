@@ -52,7 +52,7 @@
 
 //        foreach( string str in secMessage)
 //        {
-            
+
 //            messageList.Add(Regex.Replace(str, @"\s+", " ").Trim());
 //        }
 
@@ -63,7 +63,7 @@
 //            int lastElement = words.Length - 1;
 //            int secondLastElement = words.Length - 2;
 //            //int mnojitel = 1;
-            
+
 //            var index = words[secondLastElement].Substring(1);
 
 //            bool result = int.TryParse(index, out var correctIndex);
@@ -136,7 +136,7 @@ namespace MoonSoulZPBot
 
             var me = await _botClient.GetMeAsync();
             Console.WriteLine($"Бот запущен: {me.Username}");
-            await Task.Delay(-1); // Бесконечная задержка
+            await Task.Delay(-1);
         }
 
         private static Task ErrorHandler(ITelegramBotClient client, Exception exception, CancellationToken token)
@@ -148,6 +148,8 @@ namespace MoonSoulZPBot
         [Obsolete]
         private static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
+
+
             try
             {
                 if (update.Type == UpdateType.Message)
@@ -157,10 +159,10 @@ namespace MoonSoulZPBot
 
                     if (message.Type == MessageType.Text)
                     {
-                        if (message.Text == "/start")
+                        if (message.Text == "/start" || message.Text == "Посчитать зарплату")
                         {
 
-
+                            var removeKeyboard = new ReplyKeyboardRemove();
                             var startButton = new ReplyKeyboardMarkup(
                                 new List<KeyboardButton[]>
                                 {
@@ -169,6 +171,7 @@ namespace MoonSoulZPBot
                                 })
                             {
                                 ResizeKeyboard = true
+
                             };
 
                             await botClient.SendTextMessageAsync(
@@ -188,7 +191,8 @@ namespace MoonSoulZPBot
 
                         else if (message.Text == "Цена указана за одно украшение")
                         {
-                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена указана за одно украшение\n Кидай мне свой список.", cancellationToken: cancellationToken);
+                            var removeKeyboard = new ReplyKeyboardRemove();
+                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена указана за одно украшение\n Кидай мне свой список.", replyMarkup: removeKeyboard);
                             _typeOfCount = "price for one";
                             return;
 
@@ -196,7 +200,8 @@ namespace MoonSoulZPBot
 
                         else if (message.Text == "Цена уже умножена")
                         {
-                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена уже умножена\n Кидай мне свой список.", cancellationToken: cancellationToken);
+                            var removeKeyboard = new ReplyKeyboardRemove();
+                            await botClient.SendTextMessageAsync(chat.Id, "Читож, ты выбрала, что цена уже умножена\n Кидай мне свой список.", replyMarkup: removeKeyboard);
                             _typeOfCount = "price for all";
                             return;
                         }
@@ -248,10 +253,18 @@ namespace MoonSoulZPBot
 
                 var index = words[secondLastElement].Substring(1);
 
-                bool result = int.TryParse(index, out var correctIndex);
+                bool resultCount = int.TryParse(index, out var correctIndex);
+
+                bool resultPrice = int.TryParse(words[lastElement], out var correctPrice);
+                if (resultPrice == false)
+                {
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+                    return;
+                }
+
 
                 //mnojitel = correctIndex;
-                if (result == true)
+                if (resultCount == true)
                     summ += Int32.Parse(words[lastElement]) * correctIndex;
 
                 else
@@ -265,7 +278,6 @@ namespace MoonSoulZPBot
             else
                 await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
 
-            
 
             return;
         }
@@ -288,30 +300,70 @@ namespace MoonSoulZPBot
                 string[] words = str.Split(' ');
                 int lastElement = words.Length - 1;
                 int secondLastElement = words.Length - 2;
-                
+
                 var index = words[secondLastElement].Substring(1);
 
-                bool result = int.TryParse(words[lastElement], out var correctPrice);
-                if (result == true)
+
+
+                bool resultCount = int.TryParse(words[lastElement], out var correctPrice);
+                if (resultCount == true)
                     summ += correctPrice;
+                else
+                {
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+                    return;
+                }
+
+
+
             }
-            if (summ != 0)
-                await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+            if (summ > 0)
+            {
+                await botClient.SendTextMessageAsync(messageList1.Chat, text: "Сейчас посчитаем, сколько ты зарабоатла\n " + summ, cancellationToken: cancellationToken);
+
+                //await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+
+                if (summ <= 1000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "МДЭЭЭ, СПАСИБО ВЕРОНИКА ЗА ТРЕЩЕТКУ", cancellationToken: cancellationToken);
+
+                if (summ <= 3000 && summ > 1000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "ТЬФУ ТЫ, ВСЕ ДОРОГИЕ УКРАШЕНИЯ УКРАЛА КАТЯ", cancellationToken: cancellationToken);
+
+                if (summ <= 4000 && summ > 3000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Сегодня заработано нормально деньжат", cancellationToken: cancellationToken);
+
+                if (summ <= 5000 && summ > 4000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Ну даешь!", cancellationToken: cancellationToken);
+
+                if (summ >= 5000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "За это надо выпить!", cancellationToken: cancellationToken);
+
+                var firstStartButton = new ReplyKeyboardMarkup(
+                               new List<KeyboardButton[]>
+                               {
+                                    new KeyboardButton[] { new KeyboardButton("Посчитать зарплату") },
+                               })
+                {
+                    ResizeKeyboard = true
+
+                };
+
+
+                await botClient.SendTextMessageAsync(messageList1.Chat
+                                ,
+                                "Считаем зепку по новой?",
+                                replyMarkup: firstStartButton);
+                return;
+
+
+            }
+
             else
-                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
+                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибка, проверь входные данные", cancellationToken: cancellationToken);
             return;
         }
 
 
-
-
-
-
-        // Вынесенная функция для удаления дубликатов
-        private static List<T> RemoveDuplicates<T>(List<T> list)
-        {
-            return new HashSet<T>(list).ToList();
-        }
     }
 }
 
