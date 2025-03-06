@@ -159,7 +159,7 @@ namespace MoonSoulZPBot
 
                     if (message.Type == MessageType.Text)
                     {
-                        if (message.Text == "/start" || message.Text == "Посчитать зарплату")
+                        if (message.Text == "/start" || message.Text == "Посчитать зарплату" || message.Text == "Э" || message.Text == "э")
                         {
 
                             var removeKeyboard = new ReplyKeyboardRemove();
@@ -272,15 +272,52 @@ namespace MoonSoulZPBot
             }
 
 
-            if (summ != 0)
-                await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+            if (summ > 0)
+            {
+                await botClient.SendTextMessageAsync(messageList1.Chat, text: "Сейчас посчитаем, сколько ты зарабоатла\n " + summ, cancellationToken: cancellationToken);
+
+                //await botClient.SendTextMessageAsync(messageList1.Chat, Convert.ToString(summ), cancellationToken: cancellationToken);
+
+                if (summ <= 1000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "МДЭЭЭ, СПАСИБО ВЕРОНИКА ЗА ТРЕЩЕТКУ", cancellationToken: cancellationToken);
+
+                if (summ <= 3000 && summ > 1000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "ТЬФУ ТЫ, ВСЕ ДОРОГИЕ УКРАШЕНИЯ УКРАЛА КАТЯ", cancellationToken: cancellationToken);
+
+                if (summ <= 4000 && summ > 3000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Сегодня заработано нормально деньжат", cancellationToken: cancellationToken);
+
+                if (summ <= 5000 && summ > 4000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "Ну даешь!", cancellationToken: cancellationToken);
+
+                if (summ >= 5000)
+                    await botClient.SendTextMessageAsync(messageList1.Chat, "За это надо выпить!", cancellationToken: cancellationToken);
+
+                var firstStartButton = new ReplyKeyboardMarkup(
+                               new List<KeyboardButton[]>
+                               {
+                                    new KeyboardButton[] { new KeyboardButton("Посчитать зарплату") },
+                               })
+                {
+                    ResizeKeyboard = true
+
+                };
+
+
+                await botClient.SendTextMessageAsync(messageList1.Chat
+                                ,
+                                "Считаем зепку по новой?",
+                                replyMarkup: firstStartButton);
+                return;
+
+
+            }
 
             else
-                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибочка, проверь входные данные", cancellationToken: cancellationToken);
-
-
+                await botClient.SendTextMessageAsync(messageList1.Chat, "Ошибка, проверь входные данные", cancellationToken: cancellationToken);
             return;
         }
+        
 
         private static async Task PriceForAll(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
