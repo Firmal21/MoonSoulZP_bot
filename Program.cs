@@ -28,7 +28,7 @@ namespace ConsoleApp1
 
         static async Task Main()
         {
-            _botClient = new TelegramBotClient("7872456591:AAGYt_wu498zkcKC6SXg9zQ4a7tw5aiKzBU"); // Укажите свой токен
+            _botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww"); // Укажите свой токен
             _receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new[] { UpdateType.Message }
@@ -204,9 +204,8 @@ namespace ConsoleApp1
                 {
                     _messageText = string.Join("\n", _finalList);
                 }
-
-                await SendSummary(botClient, messageList1.Chat.Id, _totalSumm, cancellationToken);
                 await botClient.SendTextMessageAsync(messageList1.Chat, $"Вот твой список украшений\n{_messageText}", cancellationToken: cancellationToken);
+                await SendSummary(botClient, messageList1.Chat.Id, _totalSumm, cancellationToken);
                 _messageText = null;
                 _finalList = null;
                 return;
@@ -234,7 +233,8 @@ namespace ConsoleApp1
                 string cleanedStr = Regex.Replace(str, @"\s+", " ").Trim();
 
                 messageList.Add(cleanedStr);
-                AddToList(cleanedStr);
+                _finalList.Add(cleanedStr);
+                //AddToList(cleanedStr);
                 //_finalList.Add(Regex.Replace(str, @"\s+", " ").Trim());
                 //int lastSpaceIndex = cleanExistingEntry.LastIndexOf(" "); 
                 //string cleanName = cleanExistingEntry.Substring(0, lastSpaceIndex); Если Марине не надо будет в списке умножение
@@ -342,49 +342,49 @@ namespace ConsoleApp1
             await SendSummary(botClient, messageList1.Chat.Id, summ, cancellationToken);
         }
 
-        private static void AddToList(string newEntry)
-        {
-            string pattern = @"(\d+)$"; // Поиск последнего числа в строке
-            Match match = Regex.Match(newEntry, pattern);
+        //private static void AddToList(string newEntry)
+        //{
+        //    string pattern = @"(\d+)$"; // Поиск последнего числа в строке
+        //    Match match = Regex.Match(newEntry, pattern);
 
-            if (!match.Success)
-            {
-                Console.WriteLine("Ошибка: строка должна содержать число в конце.");
-                return;
-            }
+        //    if (!match.Success)
+        //    {
+        //        Console.WriteLine("Ошибка: строка должна содержать число в конце.");
+        //        return;
+        //    }
 
-            int newValue = int.Parse(match.Value); // Последнее число в строке
+        //    int newValue = int.Parse(match.Value); // Последнее число в строке
 
-            for (int i = 0; i < _finalList.Count; i++)
-            {
-                string existingEntry = _finalList[i];
+        //    for (int i = 0; i < _finalList.Count; i++)
+        //    {
+        //        string existingEntry = _finalList[i];
 
-                // Убираем "xN" и число в конце, чтобы сравнить основные части строки
-                string cleanExistingEntry = Regex.Replace(existingEntry, @" x\d+ \d+$", "");
+        //        // Убираем "xN" и число в конце, чтобы сравнить основные части строки
+        //        string cleanExistingEntry = Regex.Replace(existingEntry, @" x\d+ \d+$", "");
 
-                if (cleanExistingEntry == newEntry)/*.Substring(0, newEntry.LastIndexOf(" ")))*/ // Сравниваем без числа
-                {
-                    // Определяем текущий множитель (если есть)
-                    Match countMatch = Regex.Match(existingEntry, @" x(\d+)");
-                    int count = countMatch.Success ? int.Parse(countMatch.Groups[1].Value) + 1 : 2;
+        //        if (cleanExistingEntry == newEntry)/*.Substring(0, newEntry.LastIndexOf(" ")))*/ // Сравниваем без числа
+        //        {
+        //            // Определяем текущий множитель (если есть)
+        //            Match countMatch = Regex.Match(existingEntry, @" x(\d+)");
+        //            int count = countMatch.Success ? int.Parse(countMatch.Groups[1].Value) + 1 : 2;
 
-                    // Умножаем последнее число
-                    int updatedValue = newValue * count;
-
-
-                    int lastSpaceIndex = cleanExistingEntry.LastIndexOf(" ");
-                    string cleanName = cleanExistingEntry.Substring(0, lastSpaceIndex);
+        //            // Умножаем последнее число
+        //            int updatedValue = newValue * count;
 
 
-                    // Обновляем запись
-                    _finalList[i] = $"{cleanName} x{count} {updatedValue}";
-                    return;
-                }
-            }
+        //            int lastSpaceIndex = cleanExistingEntry.LastIndexOf(" ");
+        //            string cleanName = cleanExistingEntry.Substring(0, lastSpaceIndex);
 
-            // Если такой строки нет, добавляем в список
-            _finalList.Add(newEntry);
-        }
+
+        //            // Обновляем запись
+        //            _finalList[i] = $"{cleanName} x{count} {updatedValue}";
+        //            return;
+        //        }
+        //    }
+
+        //    // Если такой строки нет, добавляем в список
+        //    _finalList.Add(newEntry);
+        //}
 
 
         private static async Task SendSummary(ITelegramBotClient botclient, long chatid, double total, CancellationToken cancellationtoken)
@@ -396,17 +396,17 @@ namespace ConsoleApp1
             }
             string response;
             if (total <= 1000)
-                response = "Мдэээ, спасибо вероника за трещетку";
+                response = "СПАСИБО ЗА ПОВЫШЕНИЕ ЗЕПЕШКИ!";
             else if (total <= 3000)
-                response = "Тьфу ты, все дорогие украшения украла катя";
+                response = "Все равно у меня трусы дырявые";
             else if (total <= 4000)
-                response = "Cегодня заработано нормально деньжат";
+                response = "ООО МОЖНО КУПИТЬ ТРУСЫ МНЕ!!!";
             else if (total <= 5000)
-                response = "Ну даешь!";
+                response = "Весна на улице, это круто!!";
             else
-                response = "За это надо выпить!";
+                response = "Берегись озончик";
 
-            await botclient.SendTextMessageAsync(chatid, $"ты заработала {total}р. {response}", cancellationToken: cancellationtoken);
+            await botclient.SendTextMessageAsync(chatid, $"Сегодня ты заработала {total}р. \n {response}", cancellationToken: cancellationtoken);
 
             var restartkeyboard = new ReplyKeyboardMarkup(new[] { new KeyboardButton("Посчитать зарплату снова") })
             {
