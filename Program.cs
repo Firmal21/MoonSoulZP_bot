@@ -28,7 +28,7 @@ namespace ConsoleApp1
 
         static async Task Main()
         {
-            _botClient = new TelegramBotClient("7890997396:AAEB6ZJZf-J2H5Q_CVyhRp-adLrKEzkNnww"); // Укажите свой токен
+            _botClient = new TelegramBotClient("7563563149:AAEDX-6wVHX7KRH1lq2Vth373nK5xuNc-dY"); // Укажите свой токен
             _receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new[] { UpdateType.Message }
@@ -102,7 +102,7 @@ namespace ConsoleApp1
                             await botClient.SendTextMessageAsync(
                                 chat.Id,
                                 "Хорошо, кидай мне украшения по ходу дела, но обязательно пиши их название.\n" +
-                                "Когда захочешь закончить нажми в меню на кнопку" +
+                                "Когда захочешь закончить нажми в меню на кнопку.\n" +
                                 "Также там есть кнопка удалить предыдущее украшение, если что-то пошло не так",
                                 replyMarkup: startListButton);
                             _typeOfCount = "price during job";
@@ -144,7 +144,7 @@ namespace ConsoleApp1
                         else if (message.Text == "Цена указана за одно украшение")
                         {
                             //var removeKeyboard = new ReplyKeyboardRemove();
-                            await botClient.SendTextMessageAsync(chatId, "Читож, ты выбрала, что цена указана за одно украшение.\n Кидай мне свой список.", replyMarkup: _removeKeyboard);
+                            await botClient.SendTextMessageAsync(chatId, "Читож, ты выбрала, что цена указана за одно украшение.\nКидай мне свой список.", replyMarkup: _removeKeyboard);
                             _typeOfCount = "price for one";
                             return;
 
@@ -153,7 +153,7 @@ namespace ConsoleApp1
                         else if (message.Text == "Цена уже умножена")
                         {
                             //var removeKeyboard = new ReplyKeyboardRemove();
-                            await botClient.SendTextMessageAsync(chatId, "Читож, ты выбрала, что цена уже умножена.\n Кидай мне свой список.", replyMarkup: _removeKeyboard);
+                            await botClient.SendTextMessageAsync(chatId, "Читож, ты выбрала, что цена уже умножена.\nКидай мне свой список.", replyMarkup: _removeKeyboard);
                             _typeOfCount = "price for all";
                             return;
                         }
@@ -207,7 +207,7 @@ namespace ConsoleApp1
                 await botClient.SendTextMessageAsync(messageList1.Chat, $"Вот твой список украшений\n{_messageText}", cancellationToken: cancellationToken);
                 await SendSummary(botClient, messageList1.Chat.Id, _totalSumm, cancellationToken);
                 _messageText = null;
-                _finalList = null;
+                _finalList = new List<string>();
                 return;
             }
 
@@ -395,18 +395,20 @@ namespace ConsoleApp1
                 return;
             }
             string response;
-            if (total <= 1000)
+            if (total <= 2000)
                 response = "СПАСИБО ЗА ПОВЫШЕНИЕ ЗЕПЕШКИ!";
             else if (total <= 3000)
-                response = "Все равно у меня трусы дырявые";
+                response = "Младец, младеец (с)Совунья";
             else if (total <= 4000)
-                response = "ООО МОЖНО КУПИТЬ ТРУСЫ МНЕ!!!";
+                response = "Крутяг же ну";
             else if (total <= 5000)
-                response = "Весна на улице, это круто!!";
+                response = "Нифига себе ты наделала";
+            else if (total <= 6000)
+                response = "Ты ночью что ли работала????";
             else
                 response = "Берегись озончик";
 
-            await botclient.SendTextMessageAsync(chatid, $"Сегодня ты заработала {total}р. \n {response}", cancellationToken: cancellationtoken);
+            await botclient.SendTextMessageAsync(chatid, $"Сегодня ты заработала {total}р. \n{response}", cancellationToken: cancellationtoken);
 
             var restartkeyboard = new ReplyKeyboardMarkup(new[] { new KeyboardButton("Посчитать зарплату снова") })
             {
