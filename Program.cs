@@ -28,7 +28,7 @@ namespace ConsoleApp1
 
         static async Task Main()
         {
-            _botClient = new TelegramBotClient("7563563149:AAEDX-6wVHX7KRH1lq2Vth373nK5xuNc-dY"); // Укажите свой токен
+            _botClient = new TelegramBotClient(""); // Укажите свой токен
             _receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new[] { UpdateType.Message }
