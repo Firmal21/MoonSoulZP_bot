@@ -343,51 +343,6 @@ namespace ConsoleApp1
             await SendSummary(botClient, messageList1.Chat.Id, summ, cancellationToken);
         }
 
-        //private static void AddToList(string newEntry)
-        //{
-        //    string pattern = @"(\d+)$"; // Поиск последнего числа в строке
-        //    Match match = Regex.Match(newEntry, pattern);
-
-        //    if (!match.Success)
-        //    {
-        //        Console.WriteLine("Ошибка: строка должна содержать число в конце.");
-        //        return;
-        //    }
-
-        //    int newValue = int.Parse(match.Value); // Последнее число в строке
-
-        //    for (int i = 0; i < _finalList.Count; i++)
-        //    {
-        //        string existingEntry = _finalList[i];
-
-        //        // Убираем "xN" и число в конце, чтобы сравнить основные части строки
-        //        string cleanExistingEntry = Regex.Replace(existingEntry, @" x\d+ \d+$", "");
-
-        //        if (cleanExistingEntry == newEntry)/*.Substring(0, newEntry.LastIndexOf(" ")))*/ // Сравниваем без числа
-        //        {
-        //            // Определяем текущий множитель (если есть)
-        //            Match countMatch = Regex.Match(existingEntry, @" x(\d+)");
-        //            int count = countMatch.Success ? int.Parse(countMatch.Groups[1].Value) + 1 : 2;
-
-        //            // Умножаем последнее число
-        //            int updatedValue = newValue * count;
-
-
-        //            int lastSpaceIndex = cleanExistingEntry.LastIndexOf(" ");
-        //            string cleanName = cleanExistingEntry.Substring(0, lastSpaceIndex);
-
-
-        //            // Обновляем запись
-        //            _finalList[i] = $"{cleanName} x{count} {updatedValue}";
-        //            return;
-        //        }
-        //    }
-
-        //    // Если такой строки нет, добавляем в список
-        //    _finalList.Add(newEntry);
-        //}
-
-
         private static async Task SendSummary(ITelegramBotClient botclient, long chatid, double total, CancellationToken cancellationtoken)
         {
             if (total == 0)
