@@ -28,7 +28,7 @@ namespace ConsoleApp1
 
         static async Task Main()
         {
-            _botClient = new TelegramBotClient(""); // Укажите свой токен
+            _botClient = new TelegramBotClient("7563563149:AAEDX-6wVHX7KRH1lq2Vth373nK5xuNc-dY"); // Укажите свой токен
             _receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new[] { UpdateType.Message }
@@ -204,7 +204,8 @@ namespace ConsoleApp1
                 {
                     _messageText = string.Join("\n", _finalList);
                 }
-                await botClient.SendTextMessageAsync(messageList1.Chat, $"Вот твой список украшений\n{_messageText}", cancellationToken: cancellationToken);
+                await botClient.SendTextMessageAsync(messageList1.Chat, $"Вот твой список украшений", cancellationToken: cancellationToken);
+                await botClient.SendTextMessageAsync(messageList1.Chat, $"{_messageText}", cancellationToken: cancellationToken);
                 await SendSummary(botClient, messageList1.Chat.Id, _totalSumm, cancellationToken);
                 _messageText = null;
                 _finalList = new List<string>();
@@ -396,17 +397,35 @@ namespace ConsoleApp1
             }
             string response;
             if (total <= 2000)
-                response = "СПАСИБО ЗА ПОВЫШЕНИЕ ЗЕПЕШКИ!";
+                response = "Угощу тебя чем-нибудь, или где-нибудь";
+            else if(total <= 2250)
+                response = "Все мы виноваты в этом пиздеце, весь мунсоул, помазался этим говном\n(это правда сказал Тинькоффф)";
+            else if(total <= 2500)
+                response = "Совсем менеджеры не работают";
+            else if(total <= 2750)
+                response = "Не переживай, на неделе отыграешься";
             else if (total <= 3000)
-                response = "Младец, младеец (с)Совунья";
+                response = "Кори пукнул и денюшки улетели";
+            else if (total <= 3250)
+                response = "Ты молодец, муа";
+            else if (total <= 3500)
+                response = "Купи себе бамблби кофи";
+            else if (total <= 3750)
+                response = "Фььььььььььььь";
             else if (total <= 4000)
-                response = "Крутяг же ну";
+                response = "Это уже не тихо и стандартно, это праздник какой-то";
+            else if (total <= 4250)
+                response = "Ай, какая ты молодец";
+            else if (total <= 4500)
+                response = "ОГО, вот это я понимаю";
+            else if (total <= 4750)
+                response = "Ещё чуть чуть и прямо в рай\nИ жизнь удалась";
             else if (total <= 5000)
-                response = "Нифига себе ты наделала";
+                response = "УРА! Этот день стал Легендарным";
             else if (total <= 6000)
-                response = "Ты ночью что ли работала????";
+                response = "Отрыв фляги...";
             else
-                response = "Берегись озончик";
+                response = "Чета не понял";
 
             await botclient.SendTextMessageAsync(chatid, $"Сегодня ты заработала {total}р. \n{response}", cancellationToken: cancellationtoken);
 
