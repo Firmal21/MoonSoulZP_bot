@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Policy;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,10 +27,12 @@ namespace ConsoleApp1
         private static double _lastSumm;
         private static List<string> _finalList = new List<string>();
         private static string _messageText;
+        private static string fileName = "WeekResults.text";
+        private static int weekSumm;
 
         static async Task Main()
         {
-            _botClient = new TelegramBotClient("7563563149:AAEDX-6wVHX7KRH1lq2Vth373nK5xuNc-dY"); 
+            _botClient = new TelegramBotClient("");
             _receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new[] { UpdateType.Message }
@@ -63,8 +67,13 @@ namespace ConsoleApp1
 
                     if (message.Type == MessageType.Text)
                     {
-                        if (message.Text == "/start" || message.Text == "Посчитать зарплату снова" || message.Text == "Э" || message.Text == "э")
+
+
+                        if (message.Text == "/start" || message.Text == "Посчитать зарплату снова" || message.Text == "Э" || message.Text == "э" || message.Text == "начать новую неделю")
                         {
+
+
+
                             _totalSumm = 0;
                             var removeKeyboard = new ReplyKeyboardRemove();
                             var startButton = new ReplyKeyboardMarkup(
@@ -85,6 +94,8 @@ namespace ConsoleApp1
                                 replyMarkup: startButton);
                             return;
                         }
+
+
 
                         if (message.Text == "Вести список во время робика")
                         {
@@ -183,6 +194,27 @@ namespace ConsoleApp1
                             return;
                         }
                     }
+
+                    if (message.Text == "Конец недели")
+                    {
+
+                        GetWeekresults();
+
+                        var newWeekButton = new ReplyKeyboardMarkup(new[] { new KeyboardButton("начать новую неделю") })
+                        {
+                            ResizeKeyboard = true
+                        };
+
+
+                        await botClient.SendTextMessageAsync(
+                            chat.Id, $"На этой неделе ты заработала: {weekSumm}!", replyMarkup: newWeekButton);
+
+                        await botClient.SendTextMessageAsync(
+                            chat.Id, "поздравляю с окончанием недели!", replyMarkup: newWeekButton);
+
+                        weekSumm = 0;
+                    }
+
                 }
             }
 
@@ -241,6 +273,8 @@ namespace ConsoleApp1
                 //string cleanName = cleanExistingEntry.Substring(0, lastSpaceIndex); Если Марине не надо будет в списке умножение
 
             }
+
+
 
             foreach (string str in messageList)
             {
@@ -343,6 +377,50 @@ namespace ConsoleApp1
             await SendSummary(botClient, messageList1.Chat.Id, summ, cancellationToken);
         }
 
+        private static async Task GetWeekresults()
+        {
+
+            try
+            {
+                using (StreamReader reader = new StreamReader(fileName, Encoding.Default))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        string line = await reader.ReadLineAsync();
+                        if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            weekSumm += Int32.Parse(line);
+                        }
+                    }
+                }
+
+                File.Delete(fileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Ошибка при чтении файла: " + e.Message);
+            }
+        }
+
+        private static async Task WriteWeekResult(double total, string fileName)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(fileName, true))
+                {
+                    sw.WriteLine(total);
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+
+        }
+
+
+
         private static async Task SendSummary(ITelegramBotClient botclient, long chatid, double total, CancellationToken cancellationtoken)
         {
             if (total == 0)
@@ -353,11 +431,11 @@ namespace ConsoleApp1
             string response;
             if (total <= 2000)
                 response = "Угощу тебя чем-нибудь, или где-нибудь";
-            else if(total <= 2250)
+            else if (total <= 2250)
                 response = "Все мы виноваты в этом пиздеце, весь мунсоул, помазался этим говном\n(это правда сказал Тинькоффф)";
-            else if(total <= 2500)
+            else if (total <= 2500)
                 response = "Совсем менеджеры не работают";
-            else if(total <= 2750)
+            else if (total <= 2750)
                 response = "Не переживай, на неделе отыграешься";
             else if (total <= 3000)
                 response = "Кори пукнул и денюшки улетели";
@@ -384,12 +462,31 @@ namespace ConsoleApp1
 
             await botclient.SendTextMessageAsync(chatid, $"Сегодня ты заработала {total}р. \n{response}", cancellationToken: cancellationtoken);
 
-            var restartkeyboard = new ReplyKeyboardMarkup(new[] { new KeyboardButton("Посчитать зарплату снова") })
+            //Запись результат в файл
+            WriteWeekResult(total, fileName);
+
+
+
+
+
+
+
+            var restartListButton = new ReplyKeyboardMarkup(
+                            new List<KeyboardButton[]>
+                            {
+                                    new KeyboardButton[] { new KeyboardButton("Посчитать зарплату снова") },
+                                    new KeyboardButton[] {new KeyboardButton("Конец недели") }
+                            })
             {
                 ResizeKeyboard = true
+
             };
-            await botclient.SendTextMessageAsync(chatid, "считаем зепку по новой?", replyMarkup: restartkeyboard);
+
+
+            await botclient.SendTextMessageAsync(chatid, "считаем зепку по новой или это конец недели?", replyMarkup: restartListButton);
         }
+
     }
+
 }
 
